@@ -3,11 +3,17 @@ struct Store {
   mut counted : Int
   tasks : Array[Task]
   states : @respo.RespoStatesTree
+  mut router : RootRoute
 } derive(ToJson, @json.FromJson)
 
 ///|
 impl Default for Store with default() -> Store {
-  { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
+  {
+    counted: 0,
+    tasks: [],
+    states: @respo.RespoStatesTree::default(),
+    router: RootRoute::Home,
+  }
 }
 
 ///|
@@ -21,6 +27,7 @@ struct Task {
 ///|
 enum ActionOp {
   StatesChange(@respo.RespoUpdateState)
+  Route(RootRoute)
   Increment
   Decrement
   IncTwice
@@ -37,6 +44,7 @@ impl Show for ActionOp with output(self, logger) -> Unit {
     StatesChange(states) =>
       "StatesChange(\{states.cursor}  \{states.data.to_json()})"
     // Intent(_intent) => "Intent(...)"
+    Route(route) => "Route(\{route})"
     Increment => "Increment"
     Decrement => "Decrement"
     IncTwice => "IncTwice"
@@ -55,6 +63,7 @@ fn update(self : Store, op : ActionOp) -> Unit {
     Increment => self.counted += 1
     StatesChange(states) => self.states.set_in_mut(states)
     Decrement => self.counted -= 1
+    Route(r) => self.router = r
     _ => ()
   }
 }
