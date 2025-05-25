@@ -1,8 +1,8 @@
 {
-  "name": "respo/app",
-  "version": "0.1.0",
+  "name": "tiye/respo-router",
+  "version": "0.0.1",
   "deps": {
-    "tiye/respo": "0.0.32",
+    "tiye/respo": "0.0.33",
     "tiye/dom-ffi": "0.0.9"
   },
   "readme": "README.md",

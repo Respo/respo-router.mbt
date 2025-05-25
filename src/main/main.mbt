@@ -43,4 +43,10 @@ fn main {
     "mode",
   )
   @dom_ffi.log("dev mode: " + dev_mode.to_string())
+  @dom_ffi.log(
+    "app: " +
+    RootRoute::Team("aa", Some(SubRouteTeam::Invalid("11")))
+    .to_json()
+    .to_string(),
+  )
 }
