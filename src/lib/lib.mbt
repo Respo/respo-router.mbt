@@ -1,5 +1,5 @@
 ///|
-pub enum RouterMode {
+pub(all) enum RouterMode {
   Hash
   History
 }
@@ -53,14 +53,14 @@ pub fn listen_route(
 }
 
 ///|
-extern type Location
+priv extern type Location
 
 ///|
 extern "js" fn Location::js_set_hash(hash : String) -> Unit =
   #| (hash) => { window.location.hash = hash }
 
 ///|
-extern type History
+priv extern type History
 
 ///|
 extern "js" fn History::push_state(url : String) -> Unit =
