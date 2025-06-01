@@ -2,7 +2,7 @@
   "name": "tiye/respo-router",
   "version": "0.0.1",
   "deps": {
-    "tiye/respo": "0.0.33",
+    "tiye/respo": "0.0.34",
     "tiye/dom-ffi": "0.0.9"
   },
   "readme": "README.md",

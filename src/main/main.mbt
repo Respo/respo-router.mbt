@@ -1,11 +1,11 @@
 ///|
-fnalias @respo.(ui_global, ui_button)
+fnalias @respo.ui_global
 
 ///|
-fnalias @respo_node.(div, span, button, respo_style)
+fnalias @respo_node.(div, respo_style)
 
 ///|
-let app_store_key : String = "mbt-workflow"
+let app_store_key : String = "mbt-respo-router"
 
 ///|
 fn view(
@@ -17,7 +17,7 @@ fn view(
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
   div(class_name=ui_global, style=respo_style(padding=Px(12)), [
-    comp_container(states.pick("container")),
+    comp_container(states.pick("container"), store.router),
   ])
 }
 
@@ -37,6 +37,7 @@ fn main {
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
   app.render_loop(
     fn() {
+      println("Rendering...")
       @respo_router.render_url(app.store.val.router.route_serialize())
       view!(app.store.val)
     },

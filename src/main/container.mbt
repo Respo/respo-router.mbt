@@ -28,9 +28,11 @@ let entries : Array[LinkEntry] = [
 ]
 
 ///|
-fn comp_container(states : @respo.RespoStatesTree) -> RespoNode[ActionOp] {
-  let cursor = states.path()
-  let state = (states.cast_branch() : ContainerState)
+fn comp_container(
+  states : @respo.RespoStatesTree,
+  router : RootRoute
+) -> RespoNode[ActionOp] {
+  let ((_state : ContainerState), _cursor) = states.local_pair()
   div([
     div(
       class_name=ui_row_middle,
@@ -48,7 +50,6 @@ fn comp_container(states : @respo.RespoStatesTree) -> RespoNode[ActionOp] {
             ),
           ],
           on_click=fn(e, dispatch) {
-            @dom_ffi.warn_log("link click: \{e}")
             if e is Click(original_event~, ..) {
               original_event.prevent_default()
             }
@@ -68,14 +69,14 @@ fn comp_container(states : @respo.RespoStatesTree) -> RespoNode[ActionOp] {
       "Path:" |> text_node,
       pre(
         class_list=["json-dump", ui_font_code, style_code_block],
-        inner_text=states.to_json().stringify(indent=2),
+        inner_text=router.route_serialize(),
       ),
     ]),
     div(class_name=ui_row, [
       "Data:" |> text_node,
       pre(
         class_list=["json-dump", ui_font_code, style_code_block],
-        inner_text=states.to_json().stringify(indent=2),
+        inner_text=router.to_json().stringify(indent=2),
       ),
     ]),
   ])

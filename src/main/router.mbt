@@ -68,11 +68,7 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
         if rest.length() == 0 {
           None
         } else {
-          Some(
-            SubRouteTeam::route_parse(
-              @string.concat(rest.to_array(), separator="/"),
-            ),
-          )
+          Some(SubRouteTeam::route_parse(rest.to_array().join("/")))
         },
       )
     ["room", room_id] => Room(room_id)

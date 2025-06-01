@@ -39,7 +39,8 @@ pub fn listen_route(
     RouterMode::Hash =>
       window.add_event_listener_with_callback("hashchange", fn(_e) {
         let hash = window.location().hash()
-        let route = hash.substring(start=1)
+        let start = if hash.has_prefix("#") { 1 } else { 0 }
+        let route = hash.substring(start~)
         on_route_change(route)
         false
       })
