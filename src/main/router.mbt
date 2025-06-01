@@ -9,7 +9,7 @@ enum SubRouteTeam {
   Home
   Room(String)
   Invalid(String)
-} derive(Default, ToJson, @json.FromJson, Show)
+} derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 ///|
 // impl RespoRouterDefinition for SubRouteTeam with get_rules() {
@@ -41,7 +41,7 @@ enum RootRoute {
   Team(String, SubRouteTeam?)
   Search(String)
   Invalid(String)
-} derive(Default, ToJson, @json.FromJson, Show)
+} derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 // ///|
 // impl RespoRouterDefinition for RootRoute with get_rules() {

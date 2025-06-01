@@ -38,7 +38,7 @@ fn main {
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
   app.render_loop(
     fn() {
-      @respo_router.render_url(app.store.val.router.route_serialize())
+      @respo_router.render_url(app.store.val.router)
       view!(app.store.val)
     },
     fn(op) {

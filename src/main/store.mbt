@@ -3,7 +3,7 @@ struct Store {
   tasks : Array[Task]
   states : @respo.RespoStatesTree
   mut router : RootRoute
-} derive(ToJson, @json.FromJson)
+} derive(ToJson, @json.FromJson, Eq)
 
 ///|
 impl Default for Store with default() -> Store {

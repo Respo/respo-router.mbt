@@ -82,19 +82,23 @@ extern "js" fn History::push_state(url : String) -> Unit =
   #| (url) => { window.history.pushState({}, "", url) }
 
 ///| render_url will change the URL in the browser, either by setting the hash or using the history API
-pub fn render_url(route : String) -> Unit {
+pub fn[T : RespoRouterDefinition + Eq + Show] render_url(route : T) -> Unit {
   match router_mode.val {
     RouterMode::Hash => {
       let current_hash = @dom_ffi.window().location().hash()
         |> strip_leading_prefix
-      if current_hash != route {
-        Location::js_set_hash(route)
+      let parsed = T::route_parse(current_hash)
+      if parsed != route {
+        // println("Setting hash to: \{route} from \{current_hash}")
+        Location::js_set_hash(route.route_serialize())
       }
     }
     RouterMode::History => {
       let current_path = @dom_ffi.window().location().pathname()
-      if current_path != route {
-        History::push_state(route)
+      let parsed = T::route_parse(current_path)
+      if parsed != route {
+        // println("Setting path to: \{route} from \{current_path}")
+        History::push_state(route.route_serialize())
       }
     }
   }
