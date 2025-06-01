@@ -1,11 +1,13 @@
-///|
-fnalias @respo.(ui_global, ui_button)
+///| This is a demo app for rendering. Main code is in lib/ folder.
 
 ///|
-fnalias @respo_node.(div, span, button, respo_style)
+fnalias @respo.ui_global
 
 ///|
-let app_store_key : String = "mbt-workflow"
+fnalias @respo_node.(div, respo_style)
+
+///|
+let app_store_key : String = "mbt-respo-router"
 
 ///|
 fn view(
@@ -17,12 +19,13 @@ fn view(
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
   div(class_name=ui_global, style=respo_style(padding=Px(12)), [
-    comp_counter(states.pick("counter"), store.counted),
+    comp_container(states.pick("container"), store.router),
   ])
 }
 
 ///|
 fn main {
+  @respo_router.set_router_mode(Hash)
   let window = @dom_ffi.window()
   let mount_target = window
     .document()
@@ -37,7 +40,7 @@ fn main {
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
   app.render_loop(
     fn() {
-      @respo_router.render_url(app.store.val.router.route_serialize())
+      @respo_router.render_url(app.store.val.router)
       view!(app.store.val)
     },
     fn(op) {
@@ -46,9 +49,8 @@ fn main {
     },
   )
   @respo_router.listen_route(window, fn(route) {
-    @dom_ffi.log("route changed: " + route)
-    let parsed = RootRoute::route_parse(route)
-    app.store.val.update(ActionOp::Route(parsed))
+    app.store.val.update(Route(RootRoute::parse(route)))
+    @respo.mark_need_rerender()
   })
   let dev_mode = @dom_ffi.new_url_search_params(window.location().search()).get(
     "mode",

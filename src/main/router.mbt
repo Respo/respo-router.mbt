@@ -2,22 +2,22 @@
 fnalias @respo_router.split_route
 
 ///|
-traitalias @respo_router.RespoRouterDefinition
+traitalias @respo_router.RespoRouterRule
 
 ///|
 enum SubRouteTeam {
   Home
   Room(String)
   Invalid(String)
-} derive(Default, ToJson, @json.FromJson, Show)
+} derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 ///|
-// impl RespoRouterDefinition for SubRouteTeam with get_rules() {
+// impl RespoRouterRule for SubRouteTeam with get_rules() {
 //   [{ prefix: "room", params: ["room_id"], next: None }]
 // }
 
 ///|
-impl RespoRouterDefinition for SubRouteTeam with route_parse(s : String) {
+impl RespoRouterRule for SubRouteTeam with parse(s : String) {
   let xs = split_route(s)
   match xs {
     [] => Home
@@ -27,10 +27,10 @@ impl RespoRouterDefinition for SubRouteTeam with route_parse(s : String) {
 }
 
 ///|
-impl RespoRouterDefinition for SubRouteTeam with route_serialize(route) {
+impl RespoRouterRule for SubRouteTeam with format(route) {
   match route {
-    Home => ""
-    Room(room_id) => "room/\{room_id}"
+    Home => "/"
+    Room(room_id) => "/room/\{room_id}"
     Invalid(route) => route
   }
 }
@@ -39,13 +39,12 @@ impl RespoRouterDefinition for SubRouteTeam with route_serialize(route) {
 enum RootRoute {
   Home
   Team(String, SubRouteTeam?)
-  Room(String)
   Search(String)
   Invalid(String)
-} derive(Default, ToJson, @json.FromJson, Show)
+} derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 // ///|
-// impl RespoRouterDefinition for RootRoute with get_rules() {
+// impl RespoRouterRule for RootRoute with get_rules() {
 //   [
 //     {
 //       prefix: "team",
@@ -59,7 +58,7 @@ enum RootRoute {
 // }
 
 ///|
-impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
+impl RespoRouterRule for RootRoute with parse(s : String) {
   let xs = split_route(s)
   match xs {
     ["team", team_id, .. rest] =>
@@ -68,14 +67,9 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
         if rest.length() == 0 {
           None
         } else {
-          Some(
-            SubRouteTeam::route_parse(
-              @string.concat(rest.to_array(), separator="/"),
-            ),
-          )
+          Some(RespoRouterRule::parse(rest.to_array().join("/")))
         },
       )
-    ["room", room_id] => Room(room_id)
     ["search", query] => Search(query)
     [] => Home
     _ => Invalid(s)
@@ -83,19 +77,18 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
 }
 
 ///|
-impl RespoRouterDefinition for RootRoute with route_serialize(self) {
+impl RespoRouterRule for RootRoute with format(self) {
   match self {
-    Home => ""
+    Home => "/"
     Team(team_id, sub_route) => {
-      let p = "team/\{team_id}"
+      let p = "/team/\{team_id}"
       if sub_route is Some(sub_route) {
-        "\{p}/" + SubRouteTeam::route_serialize(sub_route)
+        "\{p}" + RespoRouterRule::format(sub_route)
       } else {
         p
       }
     }
-    Room(room_id) => "room/\{room_id}"
-    Search(query) => "search/\{query}"
+    Search(query) => "/search/\{query}"
     Invalid(route) => route
   }
 }
