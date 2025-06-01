@@ -29,8 +29,8 @@ impl RespoRouterDefinition for SubRouteTeam with route_parse(s : String) {
 ///|
 impl RespoRouterDefinition for SubRouteTeam with route_serialize(route) {
   match route {
-    Home => ""
-    Room(room_id) => "room/\{room_id}"
+    Home => "/"
+    Room(room_id) => "/room/\{room_id}"
     Invalid(route) => route
   }
 }
@@ -39,7 +39,6 @@ impl RespoRouterDefinition for SubRouteTeam with route_serialize(route) {
 enum RootRoute {
   Home
   Team(String, SubRouteTeam?)
-  Room(String)
   Search(String)
   Invalid(String)
 } derive(Default, ToJson, @json.FromJson, Show)
@@ -71,7 +70,6 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
           Some(SubRouteTeam::route_parse(rest.to_array().join("/")))
         },
       )
-    ["room", room_id] => Room(room_id)
     ["search", query] => Search(query)
     [] => Home
     _ => Invalid(s)
@@ -81,17 +79,16 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
 ///|
 impl RespoRouterDefinition for RootRoute with route_serialize(self) {
   match self {
-    Home => ""
+    Home => "/"
     Team(team_id, sub_route) => {
-      let p = "team/\{team_id}"
+      let p = "/team/\{team_id}"
       if sub_route is Some(sub_route) {
-        "\{p}/" + SubRouteTeam::route_serialize(sub_route)
+        "\{p}" + SubRouteTeam::route_serialize(sub_route)
       } else {
         p
       }
     }
-    Room(room_id) => "room/\{room_id}"
-    Search(query) => "search/\{query}"
+    Search(query) => "/search/\{query}"
     Invalid(route) => route
   }
 }

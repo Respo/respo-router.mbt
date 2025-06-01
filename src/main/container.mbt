@@ -22,7 +22,7 @@ struct LinkEntry {
 let entries : Array[LinkEntry] = [
   { name: "Home", route: RootRoute::Home },
   { name: "Team", route: RootRoute::Team("aa", Some(SubRouteTeam::Home)) },
-  { name: "Room", route: RootRoute::Room("room-1") },
+  { name: "Room", route: RootRoute::Team("team-1", Some(Room("room-1"))) },
   { name: "Search", route: RootRoute::Search("query") },
   { name: "Invalid", route: RootRoute::Invalid("invalid-route") },
 ]
@@ -58,13 +58,6 @@ fn comp_container(
         )
       }),
     ),
-    div(class_name=ui_row, [
-      "Dict:" |> text_node,
-      pre(
-        class_list=["json-dump", ui_font_code, style_code_block],
-        inner_text=states.to_json().stringify(indent=2),
-      ),
-    ]),
     div(class_name=ui_row, [
       "Path:" |> text_node,
       pre(

@@ -23,6 +23,7 @@ fn view(
 
 ///|
 fn main {
+  @respo_router.set_router_mode(Hash)
   let window = @dom_ffi.window()
   let mount_target = window
     .document()
@@ -37,7 +38,6 @@ fn main {
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
   app.render_loop(
     fn() {
-      println("Rendering...")
       @respo_router.render_url(app.store.val.router.route_serialize())
       view!(app.store.val)
     },
@@ -47,9 +47,9 @@ fn main {
     },
   )
   @respo_router.listen_route(window, fn(route) {
-    @dom_ffi.log("route changed: " + route)
     let parsed = RootRoute::route_parse(route)
     app.store.val.update(ActionOp::Route(parsed))
+    @respo.mark_need_rerender()
   })
   let dev_mode = @dom_ffi.new_url_search_params(window.location().search()).get(
     "mode",
