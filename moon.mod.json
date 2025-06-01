@@ -2,10 +2,10 @@
   "name": "tiye/respo-router",
   "version": "0.0.1",
   "deps": {
-    // "tiye/respo": "0.0.34",
-    "tiye/respo": {
-      "path": "/Users/chenyong/repo/respo/respo.mbt"
-    },
+    "tiye/respo": "0.0.34",
+    // "tiye/respo": {
+    //   "path": "/Users/chenyong/repo/respo/respo.mbt"
+    // },
     "tiye/dom-ffi": "0.0.9"
   },
   "readme": "README.md",
