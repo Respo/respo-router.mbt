@@ -1,3 +1,5 @@
+///| This is a demo app for rendering. Main code is in lib/ folder.
+
 ///|
 fnalias @respo.ui_global
 
@@ -47,8 +49,7 @@ fn main {
     },
   )
   @respo_router.listen_route(window, fn(route) {
-    let parsed = RootRoute::route_parse(route)
-    app.store.val.update(ActionOp::Route(parsed))
+    app.store.val.update(Route(RootRoute::parse(route)))
     @respo.mark_need_rerender()
   })
   let dev_mode = @dom_ffi.new_url_search_params(window.location().search()).get(

@@ -38,7 +38,7 @@ fn comp_container(
       class_name=ui_row_middle,
       ["Entries:" |> text_node] +
       entries.map(fn(entry) {
-        let route = entry.route.route_serialize()
+        let route = entry.route.format()
         let class_name = if false { "active-link" } else { "link" }
         div(
           [
@@ -62,7 +62,7 @@ fn comp_container(
       "Path:" |> text_node,
       pre(
         class_list=["json-dump", ui_font_code, style_code_block],
-        inner_text=router.route_serialize(),
+        inner_text=router.format(),
       ),
     ]),
     div(class_name=ui_row, [

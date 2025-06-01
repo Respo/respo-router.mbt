@@ -2,7 +2,7 @@
 fnalias @respo_router.split_route
 
 ///|
-traitalias @respo_router.RespoRouterDefinition
+traitalias @respo_router.RespoRouterRule
 
 ///|
 enum SubRouteTeam {
@@ -12,12 +12,12 @@ enum SubRouteTeam {
 } derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 ///|
-// impl RespoRouterDefinition for SubRouteTeam with get_rules() {
+// impl RespoRouterRule for SubRouteTeam with get_rules() {
 //   [{ prefix: "room", params: ["room_id"], next: None }]
 // }
 
 ///|
-impl RespoRouterDefinition for SubRouteTeam with route_parse(s : String) {
+impl RespoRouterRule for SubRouteTeam with parse(s : String) {
   let xs = split_route(s)
   match xs {
     [] => Home
@@ -27,7 +27,7 @@ impl RespoRouterDefinition for SubRouteTeam with route_parse(s : String) {
 }
 
 ///|
-impl RespoRouterDefinition for SubRouteTeam with route_serialize(route) {
+impl RespoRouterRule for SubRouteTeam with format(route) {
   match route {
     Home => "/"
     Room(room_id) => "/room/\{room_id}"
@@ -44,7 +44,7 @@ enum RootRoute {
 } derive(Default, ToJson, @json.FromJson, Show, Eq)
 
 // ///|
-// impl RespoRouterDefinition for RootRoute with get_rules() {
+// impl RespoRouterRule for RootRoute with get_rules() {
 //   [
 //     {
 //       prefix: "team",
@@ -58,7 +58,7 @@ enum RootRoute {
 // }
 
 ///|
-impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
+impl RespoRouterRule for RootRoute with parse(s : String) {
   let xs = split_route(s)
   match xs {
     ["team", team_id, .. rest] =>
@@ -67,7 +67,7 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
         if rest.length() == 0 {
           None
         } else {
-          Some(SubRouteTeam::route_parse(rest.to_array().join("/")))
+          Some(RespoRouterRule::parse(rest.to_array().join("/")))
         },
       )
     ["search", query] => Search(query)
@@ -77,13 +77,13 @@ impl RespoRouterDefinition for RootRoute with route_parse(s : String) {
 }
 
 ///|
-impl RespoRouterDefinition for RootRoute with route_serialize(self) {
+impl RespoRouterRule for RootRoute with format(self) {
   match self {
     Home => "/"
     Team(team_id, sub_route) => {
       let p = "/team/\{team_id}"
       if sub_route is Some(sub_route) {
-        "\{p}" + SubRouteTeam::route_serialize(sub_route)
+        "\{p}" + RespoRouterRule::format(sub_route)
       } else {
         p
       }
